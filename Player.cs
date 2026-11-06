@@ -40,13 +40,13 @@ namespace Emberbound
         public void ShowStats()
         {
             Console.WriteLine("\n==============================");
-            Console.WriteLine($"Health {Health}");
-            Console.WriteLine($"Damage {Damage}");
-            Console.WriteLine($"Defense {Defense}");
-            Console.WriteLine($"Agility {Agility}");
-            Console.WriteLine($"Coins {Coins}");
-            Console.WriteLine($"Weapon {EquippedWeapon}");
-            Console.WriteLine($"Armor {EquippedArmor}");
+            Console.WriteLine($"Health: {Health}");
+            Console.WriteLine($"Damage: {Damage}");
+            Console.WriteLine($"Defense: {Defense}");
+            Console.WriteLine($"Agility: {Agility}");
+            Console.WriteLine($"Coins: {Coins}");
+            Console.WriteLine($"Weapon: {EquippedWeapon}");
+            Console.WriteLine($"Armor: {EquippedArmor}");
             Console.WriteLine("==============================");
         }
 

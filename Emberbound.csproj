@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Emberbound.cs" />
+    <Compile Include="IEnemy.cs" />
     <Compile Include="IPlayer.cs" />
     <Compile Include="Player.cs" />
   </ItemGroup>
