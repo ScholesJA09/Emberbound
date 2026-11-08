@@ -18,5 +18,8 @@
 
         //Area Tracking
         int CurrentArea { get; set; }
+
+        //Show stats
+        void ShowStats();
     }
 }

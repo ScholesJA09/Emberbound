@@ -3,7 +3,7 @@
     internal interface IEnemy
     {
         //Name of enemy
-        string name { get; set; }
+        string Name { get; set; }
 
         //Enemy stats
         int Health { get; set; }

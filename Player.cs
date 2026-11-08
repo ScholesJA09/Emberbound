@@ -2,7 +2,7 @@
 
 namespace Emberbound
 {
-    class Player : IPlayer
+    public class Player : IPlayer
     {
         protected string name;
         protected int health;
@@ -16,25 +16,24 @@ namespace Emberbound
 
         public Player() {}
 
-        public void CreatePlayer(string inputName)
+        public Player(string name, int health, int damage, int defense, int agility, int coins, string equippedWeapon, string equippedArmor, int currentArea)
         {
             //Player name is inputed by user
-            Name = inputName;
+            Name = name;
 
             //Default player stats
-            Health = 25;
-            Damage = 5;
-            Defense = 5;
-            Agility = 5;
+            Health = health;
+            Damage = damage;
+            Defense = defense;
+            Agility = agility;
 
             //Starting currency and inventory
-            Coins = 0;
-            EquippedWeapon = "Rusty Dagger";
-            EquippedArmor = "Cloth Tunic";
+            Coins = coins;
+            EquippedWeapon = equippedWeapon;
+            EquippedArmor = equippedWeapon;
 
             //Starting area number
-            CurrentArea = 1;
-
+            CurrentArea = currentArea;
         }
 
         public void ShowStats()

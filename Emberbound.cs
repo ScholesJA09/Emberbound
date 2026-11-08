@@ -21,7 +21,7 @@ namespace Emberbound
 
                 try
                 {
-                    player.CreatePlayer(input);
+                    player = new Player(input, 25, 5, 5, 5, 0, "Rusty Dagger", "Leather Tunic", 1);
                     isValidName = true;
                 }
                 catch (Exception e)
@@ -32,6 +32,13 @@ namespace Emberbound
 
             Console.WriteLine($"\nGreetings {player.Name}, your jouney awaits...");
             player.ShowStats();
+
+            //Temporary battle
+            Enemy goblin = new Enemy("Goblin", 10, 3, 2, 3);
+
+            BattleSystem battle = new BattleSystem();
+
+            battle.SetUpBattle(player, goblin);
         }
     }
 }
