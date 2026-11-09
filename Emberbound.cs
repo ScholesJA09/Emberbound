@@ -21,7 +21,7 @@ namespace Emberbound
 
                 try
                 {
-                    player = new Player(input, 25, 5, 5, 5, 0, "Rusty Dagger", "Leather Tunic", 1);
+                    player = new Player(input, 25, 5, 5, 5, 0, "Leather Tunic", "Rusty Dagger", "Wooden Shield", "Leather Boots", "None", 1);
                     isValidName = true;
                 }
                 catch (Exception e)
@@ -31,6 +31,8 @@ namespace Emberbound
             }
 
             Console.WriteLine($"\nGreetings {player.Name}, your jouney awaits...");
+
+            //Temperary showing stats
             player.ShowStats();
 
             //Temporary battle

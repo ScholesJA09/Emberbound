@@ -4,7 +4,7 @@
     {
         Attack,
         Defend,
-        UseItem,
+        UseSpell,
         Scan,
         Retreat
     }

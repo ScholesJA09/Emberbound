@@ -12,11 +12,14 @@ namespace Emberbound
         protected int coins;
         protected string equippedWeapon;
         protected string equippedArmor;
+        protected string equippedShield;
+        protected string equippedShoes;
+        protected string equippedSpell;
         protected int currentArea;
 
         public Player() {}
 
-        public Player(string name, int health, int damage, int defense, int agility, int coins, string equippedWeapon, string equippedArmor, int currentArea)
+        public Player(string name, int health, int damage, int defense, int agility, int coins, string equippedArmor, string equippedWeapon, string equippedShield, string equippedShoes, string equippedSpell, int currentArea)
         {
             //Player name is inputed by user
             Name = name;
@@ -29,8 +32,10 @@ namespace Emberbound
 
             //Starting currency and inventory
             Coins = coins;
+            EquippedArmor = equippedArmor;
             EquippedWeapon = equippedWeapon;
-            EquippedArmor = equippedWeapon;
+            EquippedShield = equippedShield;
+            EquippedShoes = equippedShoes;
 
             //Starting area number
             CurrentArea = currentArea;
@@ -44,8 +49,11 @@ namespace Emberbound
             Console.WriteLine($"Defense: {Defense}");
             Console.WriteLine($"Agility: {Agility}");
             Console.WriteLine($"Coins: {Coins}");
-            Console.WriteLine($"Weapon: {EquippedWeapon}");
             Console.WriteLine($"Armor: {EquippedArmor}");
+            Console.WriteLine($"Weapon: {EquippedWeapon}");
+            Console.WriteLine($"Shield: {EquippedShield}");
+            Console.WriteLine($"Shoes: {EquippedShoes}");
+            Console.WriteLine($"Spell: {EquippedSpell}");
             Console.WriteLine("==============================");
         }
 
@@ -127,6 +135,19 @@ namespace Emberbound
             }
         }
 
+        public string EquippedArmor
+        {
+            get => equippedArmor;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new System.Exception("Equipped armor cannot be empty.");
+                }
+                equippedArmor = value;
+            }
+        }
+
         public string EquippedWeapon
         {
             get => equippedWeapon;
@@ -140,16 +161,42 @@ namespace Emberbound
             }
         }
 
-        public string EquippedArmor
+        public string EquippedShield
         {
-            get => equippedArmor;
+            get => equippedShield;
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new System.Exception("Equipped armor cannot be empty.");
+                    throw new System.Exception("Equipped shield cannot be empty.");
                 }
-                equippedArmor = value;
+                equippedShield = value;
+            }
+        }
+
+        public string EquippedShoes
+        {
+            get => equippedShoes;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new System.Exception("Equipped shoes cannot be empty.");
+                }
+                equippedShoes = value;
+            }
+        }
+
+        public string EquippedSpell
+        {
+            get => equippedSpell;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new System.Exception("Equipped spell cannot be empty.");
+                }
+                equippedSpell = value;
             }
         }
 
