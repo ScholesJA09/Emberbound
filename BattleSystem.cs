@@ -1,15 +1,30 @@
 ﻿using System;
+using System.Threading;
 
 namespace Emberbound
 {
     public class BattleSystem
     {
+        //Allow slow text output
+        private static void TypeText(string text, int delayMilliseconds = 50)
+        {
+            foreach (char c in text)
+            {
+                Console.Write(c);
+                Thread.Sleep(delayMilliseconds);
+            }
+            Console.WriteLine();
+        }
+
         private BattleState state;
         private Player player;
         private Enemy enemy;
+
         //Add chance to player and enemy attacks
         private static readonly Random _random = new Random();
-        bool isDefending = false;
+
+        //Track temporary defense boost
+        private int temporaryDefenseBoost = 0;
 
         public void SetUpBattle(Player playerInstance, Enemy enemyInstance)
         {
@@ -21,40 +36,77 @@ namespace Emberbound
             state = BattleState.Start;
 
             //Enemy appears
-            Console.WriteLine($"A {enemy.Name} appeared!");
+            TypeText($"\nA {enemy.Name} appeared!");
 
             //Determine who goes first based on agility
-            DetermineFirst();
+            DetermineTurnOrder();
         }
 
-        private void DetermineFirst()
+        private void DetermineTurnOrder()
         {
-            //If player's agility is greater than or equal to enemy, go first
-            if (player.Agility >= enemy.Agility)
+            //Loop until either player or enemy dies, or player retreats
+            while (player.Health > 0 && enemy.Health > 0 && state != BattleState.Loss)
             {
-                state = BattleState.PlayerTurn;
-                PlayerTurnPrompt();
+                if (player.Agility >= enemy.Agility)
+                {
+                    //If player's agility is greater than or equal to enemy, go first
+                    PlayerTurnPrompt();
+                    if (CheckBattleOver()) break;
+
+                    EnemyTurn();
+                    if (CheckBattleOver()) break;
+                }
+
+                else
+                {
+                    //If enemy's agility is greate than the player, go first
+                    EnemyTurn();
+                    if (CheckBattleOver()) break;
+
+                    PlayerTurnPrompt();
+                    if (CheckBattleOver()) break;
+                }
             }
-            else
+        }
+
+        private bool CheckBattleOver()
+        {
+            //Player dies
+            if (player.Health <= 0)
             {
-                EnemyTurn();
+                state = BattleState.Loss;
+                TypeText("\nYou have been defeated...");
+                return true;
             }
+
+            //Enemyt dies
+            if (enemy.Health <= 0)
+            {
+                state = BattleState.Won;
+                TypeText($"\nThe {enemy.Name} has been defeated!");
+                return true;
+            }
+
+            if (state == BattleState.Loss)
+            {
+                return true;
+            }
+            return false;
         }
 
         private void PlayerTurnPrompt()
         {
-            //Checks if Battle State is the player's turn
-            if (state != BattleState.PlayerTurn)
-            {
-                return;
-            }
+           //Check for both player and enemy health
+            if (player.Health <= 0 || enemy.Health <= 0) return;
+
+            state = BattleState.PlayerTurn;
 
             //Player actions
-            Console.WriteLine("\nChoose your action:");
+            TypeText("\nChoose your action:");
             Console.WriteLine("\n====================");
             Console.WriteLine("1: Attack");
             Console.WriteLine("2: Defend");
-            Console.WriteLine("3: Use Item");
+            Console.WriteLine("3: Use Spell");
             Console.WriteLine("4: Scan");
             Console.WriteLine("5: Retreat");
             Console.WriteLine("====================");
@@ -70,14 +122,14 @@ namespace Emberbound
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"[Error]: {e.Message} Please try again.");
+                    TypeText($"[Error]: {e.Message} Please try again.");
                 }
             }
 
             PlayerDecision(playerDecision);
         }
 
-        private void PlayerDecision(int playerDecision) //Start editing here
+        private void PlayerDecision(int playerDecision)
         {
             //Casting integer input to PlayerAction enum
             PlayerAction action = (PlayerAction)(playerDecision - 1);
@@ -101,93 +153,92 @@ namespace Emberbound
                     OnPlayerRetreat();
                     break;
                 default:
-                    Console.WriteLine("Unsupported action selected.");
+                    TypeText("Unsupported action selected.");
+                    PlayerTurnPrompt(); //Prompt again for unsupported selection
                     break;
-            }
-
-            //Do enemy turn based on agility
-            if (player.Agility >= enemy.Agility)
-            {
-                EnemyTurn();
             }
         }
 
         private void EnemyTurn()
         {
-            Console.WriteLine($"The {enemy.Name} attacked!");
+            //Check for both player and enemy health
+            if (player.Health <= 0 || enemy.Health <= 0) return;
+
+            state = BattleState.EnemyTurn;
+
+            TypeText($"\nThe {enemy.Name} attacked!");
 
             //10% chance for the enemy to miss their attack
             if (_random.Next(0, 100) < 10)
             {
-                Console.WriteLine($"The {enemy.Name}'s attack missed!");
+                TypeText($"\nThe {enemy.Name}'s attack missed!");
+                CleanUpDefenseBoost();
                 return;
             }
 
             //Enemy damage to player based on damage stat
-            player.Health -= Math.Max(1, enemy.Damage - (player.Defense / 2));
-            Console.WriteLine($"The {enemy.Name} hit you for {player.Damage} damage!");
+            int damageTaken = Math.Max(1, enemy.Damage - (player.Defense / 2));
+            player.Health -= damageTaken;
+            TypeText($"\nThe {enemy.Name} hit you for {damageTaken} damage!");
 
-            //Check if player is defeated
-            if (player.Health <= 0)
-            {
-                Console.WriteLine($"You have been defeated!");
-                state = BattleState.Loss;
-            }
-
-            //Do player turn based on agility
-            if (player.Agility <= enemy.Agility)
-            {
-                PlayerTurnPrompt();
-            }
+            //Revert tmeperary defense boost if player choose to defend
+            CleanUpDefenseBoost();
         }
 
         private void OnPlayerAttack()
         {
             //Console out player attack
-            Console.WriteLine($"{player.Name} attacked with the {player.EquippedWeapon}!");
+            TypeText($"\n{player.Name} attacked with the {player.EquippedWeapon}!");
 
             //10% chance for the player to miss their attack
             if(_random.Next(0, 100) <  10)
             {
-                Console.WriteLine($"You swung at the {enemy.Name}, but missed!");
+                TypeText($"\nYou swung at the {enemy.Name}, but missed!");
                 return;
             }
 
             //Do damage to enemy based on damage stat
-            enemy.Health -= Math.Max(1, player.Damage - (enemy.Defense / 2));
-            Console.WriteLine($"You hit the {enemy.Name} for {player.Damage} damage!");
-
-            //Check if eneny is defeated
-            if (enemy.Health <= 0)
-            {
-                Console.WriteLine($"The {enemy.Name} is defeated!");
-                state = BattleState.Won;
-            }
+            int damageDealt = Math.Max(1, player.Damage - (enemy.Defense / 2));
+            enemy.Health -= damageDealt;
+            TypeText($"\nYou hit the {enemy.Name} for {damageDealt} damage!");
         }
 
         private void OnPlayerDefend()
         {
-            Console.WriteLine($"You raised the {player.EquippedShield}.");
+            TypeText($"\nYou raised the {player.EquippedShield}, increasing your defense.");
 
-            //Increases players defense by 50%
-            player.Defense += (int)(player.Defense * .50);
-            isDefending = true;
+            //Increase player defense by 50%
+            temporaryDefenseBoost = (int)(player.Defense * .50);
+            player.Defense += temporaryDefenseBoost;
+        }
+
+        private void CleanUpDefenseBoost()
+        {
+            if (temporaryDefenseBoost > 0)
+            {
+                player.Defense -= temporaryDefenseBoost;
+                temporaryDefenseBoost = 0;
+            }
         }
 
         private void OnPlayerUseSpell()
         {
-            //If no spell is equipped, attack fails
-            if (player.EquippedSpell == "None")
+            if (string.IsNullOrEmpty(player.EquippedSpell) || player.EquippedSpell == "None")
             {
-                Console.WriteLine($"You have no spells, you casted nothing!");
+                //Player has no spells
+                TypeText($"\nYou have no spells equipped, you casted nothing!");
             }
-            //else if player has specific spell
+            else
+            {
+                TypeText($"\nYou cast {player.EquippedSpell}!");
+                // Add spell damage logic here
+            }
         }
 
         private void OnPlayerScan()
         {
             //See enemy stats
-            Console.WriteLine($"Scanning {enemy.Name}...");
+            TypeText($"\nScanning {enemy.Name}...");
 
             Console.WriteLine("\n==============================");
             Console.WriteLine($"Health: {enemy.Health}");
@@ -202,12 +253,12 @@ namespace Emberbound
             //50% to flee from battle
             if (_random.Next(0, 100) < 50)
             {
-                Console.WriteLine($"You flee from the {enemy.Name}");
-                return;
+                TypeText($"\nYou successfully fleed from the {enemy.Name}.");
+                state = BattleState.Loss;
             }
             else
             {
-                Console.WriteLine($"You were unable to get away.");
+                TypeText($"\nYou were unable to get away.");
             }
         }
     }

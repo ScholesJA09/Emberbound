@@ -1,13 +1,25 @@
 ﻿using System;
+using System.Threading;
 
 namespace Emberbound
 {
     class Emberbound
     {
+        //Allow slow text output
+        private static void TypeText(string text, int delayMilliseconds = 50)
+        {
+            foreach(char c in text)
+            {
+                Console.Write(c);
+                Thread.Sleep(delayMilliseconds);
+            }
+            Console.WriteLine();
+        }
+
         static void Main()
         {
             Console.WriteLine("========================================");
-            Console.WriteLine("          WELCOME TO EMBERBOUND         ");
+            TypeText("          WELCOME TO EMBERBOUND         ");
             Console.WriteLine("========================================");
 
             Player player = new Player();
@@ -16,7 +28,7 @@ namespace Emberbound
             //Loop until user gives valid name
             while (!isValidName)
             {
-                Console.Write("Enter your name, traveler: ");
+                TypeText("\nEnter your name, traveler: ");
                 string input = Console.ReadLine();
 
                 try
@@ -26,17 +38,17 @@ namespace Emberbound
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"[Error]: {e.Message} Please try again.");
+                    TypeText($"[Error]: {e.Message} Please try again.");
                 }
             }
 
-            Console.WriteLine($"\nGreetings {player.Name}, your jouney awaits...");
+            TypeText($"\nGreetings {player.Name}, your jouney awaits...");
 
             //Temperary showing stats
-            player.ShowStats();
+            //player.ShowStats();
 
             //Temporary battle
-            Enemy goblin = new Enemy("Goblin", 10, 3, 2, 3);
+            Enemy goblin = new Enemy("Goblin", 10, 5, 2, 3);
 
             BattleSystem battle = new BattleSystem();
 

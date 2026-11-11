@@ -75,10 +75,6 @@ namespace Emberbound
             get => health;
             set
             {
-                if (value < 0)
-                {
-                    throw new System.Exception("Health cannot be negative.");
-                }
                 health = value;
             }
         }
