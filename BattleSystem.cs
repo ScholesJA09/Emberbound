@@ -5,6 +5,18 @@ namespace Emberbound
 {
     public class BattleSystem
     {
+        private BattleState state;
+        private Player player;
+        private Enemy enemy;
+
+        //Add chance to player and enemy attacks
+        private static readonly Random _random = new Random();
+
+        //Track temporary defense boost
+        private int temporaryDefenseBoost = 0;
+
+        private AreaNames area; 
+
         //Allow slow text output
         private static void TypeText(string text, int delayMilliseconds = 50)
         {
@@ -15,16 +27,6 @@ namespace Emberbound
             }
             Console.WriteLine();
         }
-
-        private BattleState state;
-        private Player player;
-        private Enemy enemy;
-
-        //Add chance to player and enemy attacks
-        private static readonly Random _random = new Random();
-
-        //Track temporary defense boost
-        private int temporaryDefenseBoost = 0;
 
         public void SetUpBattle(Player playerInstance, Enemy enemyInstance)
         {
@@ -88,8 +90,9 @@ namespace Emberbound
                 //Determine random amount of coins given to player randomized from enemy coins - 5 to enemy coins + 5
                 int coinsGiven = _random.Next(enemy.Coins - 5, enemy.Coins + 5);
                 player.Coins += coinsGiven;
-                TypeText($"\nYou received {coinsGiven} coins.");
+                TypeText($"\nYou received {coinsGiven} coins!");
 
+                TypeText($"\nYou traverse further in the {area}.");
                 return true;
             }
 
@@ -182,10 +185,20 @@ namespace Emberbound
                 return;
             }
 
-            //Enemy damage to player based on damage stat
-            int damageTaken = Math.Max(1, enemy.Damage - (player.Defense / 2));
-            player.Health -= damageTaken;
-            TypeText($"\nThe {enemy.Name} hit you for {damageTaken} damage!");
+            //Enemy damage to player based on damage stat, 10% for a critical hit (2x Damage)
+            if (_random.Next(0, 100) < 10)
+            {
+                int damageTaken = Math.Max(1, (enemy.Damage * 2) - (player.Defense / 2));
+                player.Health -= damageTaken;
+                TypeText("\nCritical Hit!");
+                TypeText($"\nThe {enemy.Name} hit you for {damageTaken} damage!");
+            }
+            else
+            {
+                int damageTaken = Math.Max(1, enemy.Damage - (player.Defense / 2));
+                player.Health -= damageTaken;
+                TypeText($"\nThe {enemy.Name} hit you for {damageTaken} damage!");
+            }
 
             //Revert tmeperary defense boost if player choose to defend
             CleanUpDefenseBoost();
@@ -203,10 +216,20 @@ namespace Emberbound
                 return;
             }
 
-            //Do damage to enemy based on damage stat
-            int damageDealt = Math.Max(1, player.Damage - (enemy.Defense / 2));
-            enemy.Health -= damageDealt;
-            TypeText($"\nYou hit the {enemy.Name} for {damageDealt} damage!");
+            //Do damage to enemy based on damage stat, 10% for a critical hit (2x Damage)
+            if (_random.Next(0, 100) < 10)
+            {
+                int damageDealt = Math.Max(1, (player.Damage * 2) - (enemy.Defense / 2));
+                enemy.Health -= damageDealt;
+                TypeText("\nCritical Hit!");
+                TypeText($"\nYou hit the {enemy.Name} for {damageDealt} damage!");
+            }
+            else
+            {
+                int damageDealt = Math.Max(1, player.Damage - (enemy.Defense / 2));
+                enemy.Health -= damageDealt;
+                TypeText($"\nYou hit the {enemy.Name} for {damageDealt} damage!");
+            }
         }
 
         private void OnPlayerDefend()
