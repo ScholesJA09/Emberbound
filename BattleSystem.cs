@@ -79,11 +79,17 @@ namespace Emberbound
                 return true;
             }
 
-            //Enemyt dies
+            //Enemy dies
             if (enemy.Health <= 0)
             {
                 state = BattleState.Won;
                 TypeText($"\nThe {enemy.Name} has been defeated!");
+
+                //Determine random amount of coins given to player randomized from enemy coins - 5 to enemy coins + 5
+                int coinsGiven = _random.Next(enemy.Coins - 5, enemy.Coins + 5);
+                player.Coins += coinsGiven;
+                TypeText($"\nYou received {coinsGiven} coins.");
+
                 return true;
             }
 

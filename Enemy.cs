@@ -7,14 +7,16 @@
         protected int damage;
         protected int defense;
         protected int agility;
+        protected int coins;
 
-        public Enemy(string name, int health, int damage, int defense, int agility)
+        public Enemy(string name, int health, int damage, int defense, int agility, int coins)
         {
             Name = name;
             Health = health;
             Damage = damage;
             Defense = defense;
             Agility = agility;
+            Coins = coins;
         }
 
         public string Name
@@ -75,6 +77,19 @@
                     throw new System.Exception("Agility cannot be negative.");
                 }
                 agility = value;
+            }
+        }
+
+        public int Coins
+        {
+            get => coins;
+            set
+            {
+                if (value < 0)
+                {
+                    throw new System.Exception("Coins cannot be negative.");
+                }
+                coins = value;
             }
         }
     }

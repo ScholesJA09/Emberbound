@@ -10,5 +10,6 @@
         int Damage { get; set; }
         int Defense { get; set; }
         int Agility { get; set; }
+        int Coins { get; set; }
     }
 }

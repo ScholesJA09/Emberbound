@@ -48,11 +48,17 @@ namespace Emberbound
             //player.ShowStats();
 
             //Temporary battle
-            Enemy goblin = new Enemy("Goblin", 10, 5, 2, 3);
+            //Enemy goblin = new Enemy("Goblin", 10, 5, 2, 3, 10);
 
-            BattleSystem battle = new BattleSystem();
+            //BattleSystem battle = new BattleSystem();
 
-            battle.SetUpBattle(player, goblin);
+            //battle.SetUpBattle(player, goblin);
+
+            //Create GameLoop
+            GameLoop gameLoop = new GameLoop(player);
+
+            //Start Game
+            gameLoop.StartJourney();
         }
     }
 }
