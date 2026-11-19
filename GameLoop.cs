@@ -45,7 +45,7 @@ namespace Emberbound
                     battleSystem.SetUpBattle(player, enemy);
 
                     //Game Over Screen if player is defeated
-                    if (player.Health <= 0)
+                    if (player.CurrentHealth <= 0)
                     {
                         TypeText("\n=== GAME OVER ===");
                         return;
@@ -53,15 +53,27 @@ namespace Emberbound
                 }
 
                 //Player completes area
-                TypeText($"\nYou make it past the {i} and find a camp.");
+                AreaNames area = (AreaNames)i;
+                TypeText($"\nYou make it past the {area - 1} and find a camp.");
 
                 //Player goes to shop
                 OpenShop(i);
 
                 //Player rests, gaining small amount of health before going to next area
+                //Checks to make sure restHeal doesn't go above maxHealth
                 int restHeal = 10;
-                player.Health += restHeal;
-                TypeText($"You settle in for the night, recovering {restHeal} Health.");
+                if (player.MaxHealth - player.CurrentHealth < 10)
+                {
+                    int restSmallerHeal = player.MaxHealth - player.CurrentHealth;
+                    TypeText($"\nYou settle in for the night, recovering {restSmallerHeal} Health.");
+                    player.CurrentHealth += restSmallerHeal;
+
+                }
+                else
+                {
+                    TypeText($"\nYou settle in for the night, recovering {restHeal} Health.");
+                    player.CurrentHealth += restHeal;
+                }
             }
         }
 
@@ -81,9 +93,9 @@ namespace Emberbound
             {
                 if (isAreaBoss)
                 {
-                    return new Enemy("Forest Troll", 20, 8, 4, 7, 25);
+                    return new Enemy("Forest Troll", 1, 6, 4, 7, 25); //Health=20
                 }
-                return new Enemy("Goblin Scout", 5, 5, 2, 3, 10);
+                return new Enemy("Goblin Scout", 1, 3, 2, 3, 10); //Health=5
             }
 
             //Misty Mountains
@@ -115,11 +127,11 @@ namespace Emberbound
             while(shopping)
             {
                 Console.WriteLine($"\n--- WANDERING MERCHANT (Coins: {player.Coins}) ---");
-                Console.WriteLine("1: Healing Potion (+10 Health) - 20 Coins");
+                Console.WriteLine("1: Consume Vitality Pill (+10 Max Health) - 20 Coins");
                 Console.WriteLine("2: Sharpen Weapon (+3 Damage) - 15 Coins");
                 Console.WriteLine("3: Reinforce Shield (+2 Defense) - 15 Coins");
                 Console.WriteLine("4: Enchant Boots (+2 Agility) - 10 Coins");
-                Console.WriteLine("5: Buy FireBall Spell Book (3 Charges) - 30 Coins");
+                Console.WriteLine("5: Buy Healing Potion (3 Max) - 10 Coins");
                 Console.WriteLine("6: Leave Shop and Continue Journey");
 
                 //Loop until user selects valid number
@@ -133,24 +145,24 @@ namespace Emberbound
                     }
                     catch (Exception e)
                     {
-                        TypeText($"[Error]: {e.Message} Please try again.");
+                        TypeText($"\n[Error]: {e.Message} Please try again.");
                     }
                 }
 
                 //Effects for each shop decision
                 switch (choice)
                 {
-                    //Healing Health
+                    //Upgradeing Max Health
                     case 1:
                         if (player.Coins >= 20)
                         {
-                            player.Health += 10;
+                            player.MaxHealth += 10;
                             player.Coins -= 20;
-                            TypeText($"You drank the potion! Your health is now {player.Health}!");
+                            TypeText($"\nYou took the pill! Your max health is now {player.MaxHealth}!");
                         }
                         else
                         {
-                            TypeText("Not enough coins!");
+                            TypeText("\nNot enough coins!");
                         }
                         break;
                     //Upgrading Damage
@@ -159,11 +171,11 @@ namespace Emberbound
                         {
                             player.Damage += 3;
                             player.Coins -= 15;
-                            TypeText($"Weapon Upgraded! Your damage is now {player.Damage}!");
+                            TypeText($"\nWeapon Upgraded! Your damage is now {player.Damage}!");
                         }
                         else
                         {
-                            TypeText("Not enough coins!");
+                            TypeText("\nNot enough coins!");
                         }
                         break;
                     //Upgrading Defense
@@ -172,11 +184,11 @@ namespace Emberbound
                         {
                             player.Defense += 2;
                             player.Coins -= 15;
-                            TypeText($"Shield Upgraded! Your defense is now {player.Defense}!");
+                            TypeText($"\nShield Upgraded! Your defense is now {player.Defense}!");
                         }
                         else
                         {
-                            TypeText("Not enough coins!");
+                            TypeText("\nNot enough coins!");
                         }
                         break;
                     //Upgrading Agility
@@ -185,29 +197,35 @@ namespace Emberbound
                         {
                             player.Agility += 2;
                             player.Coins -= 10;
-                            TypeText($"Boots Enchanted! Your agility is now {player.Agility}!");
+                            TypeText($"\nBoots Enchanted! Your agility is now {player.Agility}!");
                         }
                         else
                         {
-                            TypeText("Not enough coins!");
+                            TypeText("\nNot enough coins!");
                         }
                         break;
-                    //Unlocking Spell Book
+                    //Purchasing Healing Potion
                     case 5:
-                        if (player.Coins >= 30)
+                        if (player.EquippedHealingPotions >= 3)
                         {
-                            player.EquippedSpell = "Fireball";
-                            player.Coins -= 30;
-                            TypeText("You aquired the Fireball Spell Book!");
+                            TypeText("\nYou already have the maxxed amount of healing potions!");
+                            break;
+                        }
+
+                        if (player.Coins >= 10)
+                        {
+                            player.EquippedHealingPotions++;
+                            player.Coins -= 10;
+                            TypeText("\nYou purchased a healing potion!");
                         }
                         else
                         {
-                            TypeText("Not enough coins!");
+                            TypeText("\nNot enough coins!");
                         }
                         break;
                     //Leaving Shop
                     case 6:
-                        TypeText("You pack your gear and leave the merchant.");
+                        TypeText("\nYou pack your gear and leave the merchant.");
                         shopping = false;
                         break;
                 }

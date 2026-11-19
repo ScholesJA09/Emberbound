@@ -47,7 +47,7 @@ namespace Emberbound
         private void DetermineTurnOrder()
         {
             //Loop until either player or enemy dies, or player retreats
-            while (player.Health > 0 && enemy.Health > 0 && state != BattleState.Loss)
+            while (player.CurrentHealth > 0 && enemy.Health > 0 && state != BattleState.Loss)
             {
                 if (player.Agility >= enemy.Agility)
                 {
@@ -74,7 +74,7 @@ namespace Emberbound
         private bool CheckBattleOver()
         {
             //Player dies
-            if (player.Health <= 0)
+            if (player.CurrentHealth <= 0)
             {
                 state = BattleState.Loss;
                 TypeText("\nYou have been defeated...");
@@ -106,7 +106,7 @@ namespace Emberbound
         private void PlayerTurnPrompt()
         {
            //Check for both player and enemy health
-            if (player.Health <= 0 || enemy.Health <= 0) return;
+            if (player.CurrentHealth <= 0 || enemy.Health <= 0) return;
 
             state = BattleState.PlayerTurn;
 
@@ -115,7 +115,7 @@ namespace Emberbound
             Console.WriteLine("\n====================");
             Console.WriteLine("1: Attack");
             Console.WriteLine("2: Defend");
-            Console.WriteLine("3: Use Spell");
+            Console.WriteLine("3: Use Healing Potion");
             Console.WriteLine("4: Scan");
             Console.WriteLine("5: Retreat");
             Console.WriteLine("====================");
@@ -152,8 +152,8 @@ namespace Emberbound
                 case PlayerAction.Defend:
                     OnPlayerDefend();
                     break;
-                case PlayerAction.UseSpell:
-                    OnPlayerUseSpell();
+                case PlayerAction.UseHealingPotion:
+                    OnPlayerUseHealingPotion();
                     break;
                 case PlayerAction.Scan:
                     OnPlayerScan();
@@ -171,7 +171,7 @@ namespace Emberbound
         private void EnemyTurn()
         {
             //Check for both player and enemy health
-            if (player.Health <= 0 || enemy.Health <= 0) return;
+            if (player.CurrentHealth <= 0 || enemy.Health <= 0) return;
 
             state = BattleState.EnemyTurn;
 
@@ -189,14 +189,14 @@ namespace Emberbound
             if (_random.Next(0, 100) < 10)
             {
                 int damageTaken = Math.Max(1, (enemy.Damage * 2) - (player.Defense / 2));
-                player.Health -= damageTaken;
+                player.CurrentHealth -= damageTaken;
                 TypeText("\nCritical Hit!");
                 TypeText($"\nThe {enemy.Name} hit you for {damageTaken} damage!");
             }
             else
             {
                 int damageTaken = Math.Max(1, enemy.Damage - (player.Defense / 2));
-                player.Health -= damageTaken;
+                player.CurrentHealth -= damageTaken;
                 TypeText($"\nThe {enemy.Name} hit you for {damageTaken} damage!");
             }
 
@@ -250,17 +250,35 @@ namespace Emberbound
             }
         }
 
-        private void OnPlayerUseSpell()
+        private void OnPlayerUseHealingPotion()
         {
-            if (string.IsNullOrEmpty(player.EquippedSpell) || player.EquippedSpell == "None")
+            //Player has no healing potions
+            if (player.EquippedHealingPotions == 0)
             {
-                //Player has no spells
-                TypeText($"\nYou have no spells equipped, you casted nothing!");
+                TypeText($"\nYou have no healing potions equipped, you did nothing!");
+            }
+            //Player is at max health
+            else if(player.MaxHealth == player.CurrentHealth)
+            {
+                TypeText($"\nYou are at max health, you did nothing!");
             }
             else
             {
-                TypeText($"\nYou cast {player.EquippedSpell}!");
-                // Add spell damage logic here
+                //Player uses a healing potion, checks so that it does not go above max health
+                TypeText($"\nYou drank a healing potion!");
+                if (player.MaxHealth - player.CurrentHealth < 10)
+                {
+                    int smallHealthGained = player.MaxHealth - player.CurrentHealth;
+                    player.CurrentHealth += smallHealthGained;
+                    TypeText($"\nRestored {smallHealthGained} Health! Current Health: {player.CurrentHealth}");
+                }
+                else
+                {
+                    player.CurrentHealth += 10;
+                    TypeText($"\nRestored 10 Health! Current Health: {player.CurrentHealth}");
+                }
+                
+                player.EquippedHealingPotions--;
             }
         }
 

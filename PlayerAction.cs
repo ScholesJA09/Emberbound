@@ -4,7 +4,7 @@
     {
         Attack,
         Defend,
-        UseSpell,
+        UseHealingPotion,
         Scan,
         Retreat
     }

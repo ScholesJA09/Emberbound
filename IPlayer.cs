@@ -6,10 +6,13 @@
         string Name { get; set; }
 
         //Stats - Can be upgraded per run
-        int Health { get; set; }
+        int MaxHealth { get; set; }
         int Damage { get; set; }
         int Defense { get; set; }
         int Agility { get; set; }
+
+        //Current Health to change over time
+        int CurrentHealth { get; set; }
 
         //Economy and Inventory
         int Coins { get; set; }
@@ -17,7 +20,7 @@
         string EquippedWeapon { get; set; }
         string EquippedShield { get; set; }
         string EquippedShoes { get; set; }
-        string EquippedSpell {  get; set; }
+        int EquippedHealingPotions { get; set; }
 
         //Area Tracking
         int CurrentArea { get; set; }

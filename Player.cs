@@ -5,30 +5,34 @@ namespace Emberbound
     public class Player : IPlayer
     {
         protected string name;
-        protected int health;
+        protected int maxHealth;
         protected int damage;
         protected int defense;
         protected int agility;
         protected int coins;
+        protected int currentHealth;
         protected string equippedWeapon;
         protected string equippedArmor;
         protected string equippedShield;
         protected string equippedShoes;
-        protected string equippedSpell;
+        protected int equippedHealingPotions;
         protected int currentArea;
 
         public Player() {}
 
-        public Player(string name, int health, int damage, int defense, int agility, int coins, string equippedArmor, string equippedWeapon, string equippedShield, string equippedShoes, string equippedSpell, int currentArea)
+        public Player(string name, int maxHealth, int damage, int defense, int agility, int currentHealth, int coins, string equippedArmor, string equippedWeapon, string equippedShield, string equippedShoes, int equippedHealingPotions, int currentArea)
         {
             //Player name is inputed by user
             Name = name;
 
             //Default player stats
-            Health = health;
+            MaxHealth = maxHealth;
             Damage = damage;
             Defense = defense;
             Agility = agility;
+
+            //Current Tracking Health
+            CurrentHealth = currentHealth;
 
             //Starting currency and inventory
             Coins = coins;
@@ -37,6 +41,9 @@ namespace Emberbound
             EquippedShield = equippedShield;
             EquippedShoes = equippedShoes;
 
+            //Amount of healing potions
+            EquippedHealingPotions = equippedHealingPotions;
+
             //Starting area number
             CurrentArea = currentArea;
         }
@@ -44,7 +51,7 @@ namespace Emberbound
         public void ShowStats()
         {
             Console.WriteLine("\n==============================");
-            Console.WriteLine($"Health: {Health}");
+            Console.WriteLine($"Max Health: {MaxHealth}");
             Console.WriteLine($"Damage: {Damage}");
             Console.WriteLine($"Defense: {Defense}");
             Console.WriteLine($"Agility: {Agility}");
@@ -53,7 +60,7 @@ namespace Emberbound
             Console.WriteLine($"Weapon: {EquippedWeapon}");
             Console.WriteLine($"Shield: {EquippedShield}");
             Console.WriteLine($"Shoes: {EquippedShoes}");
-            Console.WriteLine($"Spell: {EquippedSpell}");
+            Console.WriteLine($"Healing Potions: {EquippedHealingPotions}");
             Console.WriteLine("==============================");
         }
 
@@ -70,12 +77,16 @@ namespace Emberbound
             }
         }
 
-        public int Health
+        public int MaxHealth
         {
-            get => health;
+            get => maxHealth;
             set
             {
-                health = value;
+                if (value < 0)
+                {
+                    throw new System.Exception("Player max health cannot be negative.");
+                }
+                maxHealth = value;
             }
         }
 
@@ -115,6 +126,15 @@ namespace Emberbound
                     throw new System.Exception("Agility cannot be negative.");
                 }
                 agility = value;
+            }
+        }
+
+        public int CurrentHealth
+        {
+            get => currentHealth;
+            set
+            {
+                currentHealth = value;
             }
         }
 
@@ -183,16 +203,16 @@ namespace Emberbound
             }
         }
 
-        public string EquippedSpell
+        public int EquippedHealingPotions
         {
-            get => equippedSpell;
+            get => equippedHealingPotions;
             set
             {
-                if (string.IsNullOrWhiteSpace(value))
+                if (value < 0)
                 {
-                    throw new System.Exception("Equipped spell cannot be empty.");
+                    throw new System.Exception("Equipped healing potions cannot be negative.");
                 }
-                equippedSpell = value;
+                equippedHealingPotions = value;
             }
         }
 
