@@ -10,6 +10,7 @@
         int Damage { get; set; }
         int Defense { get; set; }
         int Agility { get; set; }
+        int Exp { get; set; }
 
         //Current Health to change over time
         int CurrentHealth { get; set; }

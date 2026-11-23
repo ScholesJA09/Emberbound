@@ -9,6 +9,7 @@ namespace Emberbound
         protected int damage;
         protected int defense;
         protected int agility;
+        protected int exp;
         protected int coins;
         protected int currentHealth;
         protected string equippedWeapon;
@@ -20,7 +21,7 @@ namespace Emberbound
 
         public Player() {}
 
-        public Player(string name, int maxHealth, int damage, int defense, int agility, int currentHealth, int coins, string equippedArmor, string equippedWeapon, string equippedShield, string equippedShoes, int equippedHealingPotions, int currentArea)
+        public Player(string name, int maxHealth, int damage, int defense, int agility, int exp, int currentHealth, int coins, string equippedArmor, string equippedWeapon, string equippedShield, string equippedShoes, int equippedHealingPotions, int currentArea)
         {
             //Player name is inputed by user
             Name = name;
@@ -30,6 +31,7 @@ namespace Emberbound
             Damage = damage;
             Defense = defense;
             Agility = agility;
+            Exp = exp;
 
             //Current Tracking Health
             CurrentHealth = currentHealth;
@@ -126,6 +128,19 @@ namespace Emberbound
                     throw new System.Exception("Agility cannot be negative.");
                 }
                 agility = value;
+            }
+        }
+
+        public int Exp
+        {
+            get => exp;
+            set
+            {
+                if (value < 0)
+                {
+                    throw new System.Exception("EXP cannot be negative.");
+                }
+                exp = value;
             }
         }
 

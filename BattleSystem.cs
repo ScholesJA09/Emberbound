@@ -15,6 +15,12 @@ namespace Emberbound
         //Track temporary defense boost
         private int temporaryDefenseBoost = 0;
 
+        //Check if enemy will stunned when player is defending
+        private bool isEnemyToBeStunned;
+
+        //Check if enemy wont attack if stunned
+        private bool isEnemyStunned;
+
         private AreaNames area; 
 
         //Allow slow text output
@@ -36,6 +42,10 @@ namespace Emberbound
 
             //Set battle state to start
             state = BattleState.Start;
+
+            //Clean up defense boost and stunning
+            CleanUpDefenseBoost();
+            CleanUpEnemyStun();
 
             //Enemy appears
             TypeText($"\nA {enemy.Name} appeared!");
@@ -87,10 +97,12 @@ namespace Emberbound
                 state = BattleState.Won;
                 TypeText($"\nThe {enemy.Name} has been defeated!");
 
-                //Determine random amount of coins given to player randomized from enemy coins - 5 to enemy coins + 5
+                //Determine random amount of coins and exp given to player randomized from enemy coins and exp
                 int coinsGiven = _random.Next(enemy.Coins - 5, enemy.Coins + 5);
                 player.Coins += coinsGiven;
-                TypeText($"\nYou received {coinsGiven} coins!");
+                int expGiven = _random.Next(enemy.Exp - 5, enemy.Exp + 5);
+                player.Exp += expGiven;
+                TypeText($"\nYou received {coinsGiven} coins and {expGiven} EXP!");
 
                 TypeText($"\nYou traverse further in the {area}.");
                 return true;
@@ -175,6 +187,14 @@ namespace Emberbound
 
             state = BattleState.EnemyTurn;
 
+            if (isEnemyStunned)
+            {
+                TypeText($"\nThe {enemy.Name} cannot attack because it is stunned!");
+                CleanUpEnemyStun();
+                CleanUpDefenseBoost();
+                return;
+            }
+
             TypeText($"\nThe {enemy.Name} attacked!");
 
             //10% chance for the enemy to miss their attack
@@ -198,6 +218,14 @@ namespace Emberbound
                 int damageTaken = Math.Max(1, enemy.Damage - (player.Defense / 2));
                 player.CurrentHealth -= damageTaken;
                 TypeText($"\nThe {enemy.Name} hit you for {damageTaken} damage!");
+            }
+
+            //If player triggered stun
+            if (isEnemyToBeStunned && player.CurrentHealth > 0)
+            {
+                TypeText($"\nYou bashed the {enemy.Name} with your {player.EquippedShield}, stunning it!");
+                isEnemyStunned = true;
+                isEnemyToBeStunned = false;
             }
 
             //Revert tmeperary defense boost if player choose to defend
@@ -236,9 +264,19 @@ namespace Emberbound
         {
             TypeText($"\nYou raised the {player.EquippedShield}, increasing your defense.");
 
+            //Clear previous defense/stun effects
+            CleanUpDefenseBoost();
+            isEnemyToBeStunned = false;
+
             //Increase player defense by 50%
             temporaryDefenseBoost = (int)(player.Defense * .50);
             player.Defense += temporaryDefenseBoost;
+
+            //Chance to stun enemy by 50%
+            if (_random.Next(0, 100) < 50)
+            {
+                isEnemyToBeStunned = true;
+            }
         }
 
         private void CleanUpDefenseBoost()
@@ -248,6 +286,12 @@ namespace Emberbound
                 player.Defense -= temporaryDefenseBoost;
                 temporaryDefenseBoost = 0;
             }
+        }
+
+        private void CleanUpEnemyStun()
+        {
+            isEnemyToBeStunned = false;
+            isEnemyStunned = false;
         }
 
         private void OnPlayerUseHealingPotion()

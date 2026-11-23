@@ -5,8 +5,8 @@ using System.Threading;
 //Instead of Spell Book, you have healing potions that heal you a certain amount
 //3 at most, get more from shop (DONE)
 //When stats go above a certain limit, you change clothing name (DONE)
-//Shield to have 50% to stun enemy for next turn
-//XP, gain a certain stat when level up.
+//Shield to have 50% to stun enemy for next turn (DONE)
+//XP, gain a certain stat when level up (JUST NEED TO IMPLIMENT EXP LEVEL UP SYSTEM)
 
 namespace Emberbound
 {
@@ -40,7 +40,7 @@ namespace Emberbound
 
                 try
                 {
-                    player = new Player(input, 30, 5, 5, 5, 25, 0, "Leather Tunic", "Rusty Dagger", "Wooden Shield", "Leather Boots", 3, 1);
+                    player = new Player(input, 30, 5, 5, 5, 0, 25, 0, "Leather Tunic", "Rusty Dagger", "Wooden Shield", "Leather Boots", 3, 1);
                     isValidName = true;
                 }
                 catch (Exception e)

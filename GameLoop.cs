@@ -93,9 +93,9 @@ namespace Emberbound
             {
                 if (isAreaBoss)
                 {
-                    return new Enemy("Forest Troll", 1, 6, 4, 7, 25); //Health=20
+                    return new Enemy("Forest Troll", 1, 6, 4, 7, 25, 25); //Health=20
                 }
-                return new Enemy("Goblin Scout", 1, 3, 2, 3, 10); //Health=5
+                return new Enemy("Goblin Scout", 1, 3, 2, 3, 10, 12); //Health=5
             }
 
             //Misty Mountains
@@ -103,9 +103,9 @@ namespace Emberbound
             {
                 if (isAreaBoss)
                 {
-                    return new Enemy("Magma Golem", 42, 11, 8, 9, 40);
+                    return new Enemy("Magma Golem", 42, 11, 8, 9, 40, 40);
                 }
-                return new Enemy("Cinder Skeleton", 22, 8, 4, 6, 15);
+                return new Enemy("Cinder Skeleton", 22, 8, 4, 6, 15, 17);
             }
 
             //Frozen Fortress
@@ -113,9 +113,9 @@ namespace Emberbound
             {
                 if (isAreaBoss)
                 {
-                    return new Enemy("Glacial Sentinal", 65, 15, 10, 10, 70);
+                    return new Enemy("Glacial Sentinal", 65, 15, 10, 10, 70, 65);
                 }
-                return new Enemy("Frozen Knight", 38, 12, 8, 9, 20);
+                return new Enemy("Frozen Knight", 38, 12, 8, 9, 20, 22);
             }
         }
 
