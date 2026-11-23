@@ -4,7 +4,7 @@ using System.Threading;
 //NOTES
 //Instead of Spell Book, you have healing potions that heal you a certain amount
 //3 at most, get more from shop (DONE)
-//When stats go above a certain limit, you change clothing name
+//When stats go above a certain limit, you change clothing name (DONE)
 //Shield to have 50% to stun enemy for next turn
 //XP, gain a certain stat when level up.
 

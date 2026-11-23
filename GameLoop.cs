@@ -152,13 +152,24 @@ namespace Emberbound
                 //Effects for each shop decision
                 switch (choice)
                 {
-                    //Upgradeing Max Health
+                    //Upgrading Max Health
                     case 1:
                         if (player.Coins >= 20)
                         {
                             player.MaxHealth += 10;
+                            player.CurrentHealth += 10;
                             player.Coins -= 20;
                             TypeText($"\nYou took the pill! Your max health is now {player.MaxHealth}!");
+                            if (player.MaxHealth >= 60 && player.EquippedArmor != "Obsidian Plate")
+                            {
+                                player.EquippedArmor = "Obsidian Plate";
+                                TypeText($"\nArmor upgraded into {player.EquippedArmor}!");
+                            }
+                            else if (player.MaxHealth >= 45 && player.EquippedArmor != "Reinforced Chainmail" && player.EquippedArmor != "Obsidian Plate")
+                            {
+                                player.EquippedArmor = "Reinforced Chainmail";
+                                TypeText($"\nArmor upgraded into {player.EquippedArmor}!");
+                            }
                         }
                         else
                         {
@@ -172,6 +183,16 @@ namespace Emberbound
                             player.Damage += 3;
                             player.Coins -= 15;
                             TypeText($"\nWeapon Upgraded! Your damage is now {player.Damage}!");
+                            if (player.Damage >= 25 && player.EquippedWeapon != "Enforced Steelblade")
+                            {
+                                player.EquippedWeapon = "Enforced Steelblade";
+                                TypeText($"\nWeapon forged into {player.EquippedWeapon}!");
+                            }
+                            else if (player.Damage >= 12 && player.EquippedWeapon != "Iron Sword" && player.EquippedWeapon != "Enforced Steelblade")
+                            {
+                                player.EquippedWeapon = "Iron Sword";
+                                TypeText($"\nWeapon forged into {player.EquippedWeapon}!");
+                            }
                         }
                         else
                         {
@@ -185,6 +206,16 @@ namespace Emberbound
                             player.Defense += 2;
                             player.Coins -= 15;
                             TypeText($"\nShield Upgraded! Your defense is now {player.Defense}!");
+                            if (player.Defense >= 25 && player.EquippedShield != "Obsidian Bulwark")
+                            {
+                                player.EquippedShield = "Obsidian Bulwark";
+                                TypeText($"\nShield reinforced into {player.EquippedShield}!");
+                            }
+                            else if (player.Defense >= 12 && player.EquippedShield != "Iron Shield" && player.EquippedShield != "Obsidian Bulwark")
+                            {
+                                player.EquippedShield = "Iron Shield";
+                                TypeText($"\nShield reinforced into {player.EquippedShield}!");
+                            }
                         }
                         else
                         {
@@ -198,6 +229,16 @@ namespace Emberbound
                             player.Agility += 2;
                             player.Coins -= 10;
                             TypeText($"\nBoots Enchanted! Your agility is now {player.Agility}!");
+                            if (player.Agility >= 25 && player.EquippedShoes != "Swiftstrider Treads")
+                            {
+                                player.EquippedShoes = "Swiftstrider Treads";
+                                TypeText($"\nBoots upgraded into {player.EquippedShoes}!");
+                            }
+                            else if (player.Agility >= 12 && player.EquippedShoes != "Iron Boots" && player.EquippedShoes != "Swiftstrider Treads")
+                            {
+                                player.EquippedShoes = "Iron Boots";
+                                TypeText($"\nBoots upgraded into {player.EquippedShoes}!");
+                            }
                         }
                         else
                         {
